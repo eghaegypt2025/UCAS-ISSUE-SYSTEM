@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام القضايا الطلابية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        .sidebar {
+            transition: all 0.3s;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="sidebar bg-blue-800 text-white w-64 fixed h-full overflow-y-auto">
+            <div class="p-4 flex items-center justify-between border-b border-blue-700">
+                <h1 class="text-xl font-bold">نظام القضايا</h1>
+                <button id="closeSidebar" class="md:hidden">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <nav class="p-4">
+                <ul>
+                    <li class="mb-2">
+                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="dashboardLink">
+                            <i class="fas fa-home mr-2"></i> لوحة التحكم
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="casesLink">
+                            <i class="fas fa-file-alt mr-2"></i> القضايا الطلابية
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="reportsLink">
+                            <i class="fas fa-chart-bar mr-2"></i> التقارير
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="inquiriesLink">
+                            <i class="fas fa-question-circle mr-2"></i> الاستفسارات
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 md:mr-64">
+            <!-- Header -->
+            <header class="bg-white shadow p-4 flex justify-between items-center">
+                <button id="toggleSidebar" class="md:hidden">
+                    <i class="fas fa-bars text-blue-800 text-xl"></i>
+                </button>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <i class="fas fa-bell text-gray-600 text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">3</span>
+                    </div>
+                    <div class="flex items-center">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="rounded-full w-10 h-10 hover:scale-110 transition-transform duration-200 cursor-pointer">
+                        <span class="mr-2">مسؤول النظام</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="p-4">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-800">لوحة التحكم</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="totalCasesCard">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-gray-500">إجمالي القضايا</h3>
+                                    <p class="text-3xl font-bold">124</p>
+                                </div>
+                                <div class="bg-blue-100 p-3 rounded-full">
+                                    <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="openCasesCard">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-gray-500">قضايا مفتوحة</h3>
+                                    <p class="text-3xl font-bold">42</p>
+                                </div>
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <i class="fas fa-folder-open text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="closedCasesCard">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-gray-500">قضايا مغلقة</h3>
+                                    <p class="text-3xl font-bold">82</p>
+                                </div>
+                                <div class="bg-red-100 p-3 rounded-full">
+                                    <i class="fas fa-check-circle text-red-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cases Section -->
+                <div id="casesSection" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-blue-800">إدارة القضايا الطلابية</h2>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" id="addCaseBtn">
+                            <i class="fas fa-plus mr-2"></i> إضافة قضية جديدة
+                        </button>
+                    </div>
+
+                    <!-- Add Case Modal -->
+                    <div id="addCaseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold">إضافة قضية جديدة</h3>
+                                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <form id="caseForm">
+                                <div class="mb-4">
+                                    <label for="studentName" class="block mb-2 font-medium">اسم الطالب</label>
+                                    <input type="text" id="studentName" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="studentId" class="block mb-2 font-medium">رقم الطالب</label>
+                                    <input type="text" id="studentId" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="gender" class="block mb-2 font-medium">الجنس</label>
+                                    <select id="gender" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">اختر الجنس</option>
+                                        <option value="male">ذكر</option>
+                                        <option value="female">أنثى</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="major" class="block mb-2 font-medium">التخصص</label>
+                                    <select id="major" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">اختر التخصص</option>
+                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
+                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
+                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="level" class="block mb-2 font-medium">المستوى الدراسي</label>
+                                    <select id="level" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                        <option value="">اختر المستوى</option>
+                                        <option value="1">سنة أولى</option>
+                                        <option value="2">سنة ثانية</option>
+                                        <option value="3">سنة ثالثة</option>
+                                        <option value="4">سنة رابعة</option>
+                                        <option value="5">سنة خامسة</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="caseDescription" class="block mb-2 font-medium">وصف القضية</label>
+                                    <textarea id="caseDescription" rows="4" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" id="cancelCaseBtn" class="px-4 py-2 border rounded mr-2 hover:bg-gray-100 transition">إلغاء</button>
+                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">حفظ</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Cases Table -->
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">رقم القضية</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">اسم الطالب</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">التخصص</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المستوى</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">حالة القضية</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المرشد</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">الإجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200" id="casesTableBody">
+                                    <!-- Cases will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Section -->
+                <div id="reportsSection" class="hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-800">تقارير القضايا الطلابية</h2>
+                    
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+                        <div class="p-4 border-b">
+                            <h3 class="font-bold">تصفية التقارير</h3>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label class="block mb-2 font-medium">التخصص</label>
+                                    <select id="reportMajorFilter" class="w-full p-2 border rounded">
+                                        <option value="">جميع التخصصات</option>
+                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
+                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
+                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-medium">المستوى</label>
+                                    <select id="reportLevelFilter" class="w-full p-2 border rounded">
+                                        <option value="">جميع المستويات</option>
+                                        <option value="1">سنة أولى</option>
+                                        <option value="2">سنة ثانية</option>
+                                        <option value="3">سنة ثالثة</option>
+                                        <option value="4">سنة رابعة</option>
+                                        <option value="5">سنة خامسة</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-medium">حالة القضية</label>
+                                    <select id="reportStatusFilter" class="w-full p-2 border rounded">
+                                        <option value="">جميع الحالات</option>
+                                        <option value="open">مفتوحة</option>
+                                        <option value="closed">مغلقة</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button id="generateReportBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                <i class="fas fa-file-export mr-2"></i> توليد التقرير
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">رقم القضية</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">اسم الطالب</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">التخصص</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المستوى</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">حالة القضية</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">تاريخ الإنشاء</th>
+                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المرشد</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200" id="reportsTableBody">
+                                    <!-- Reports will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inquiries Section -->
+                <div id="inquiriesSection" class="hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-800">الاستفسارات</h2>
+                    
+                    <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+                        <div class="p-4 border-b">
+                            <h3 class="font-bold">بحث عن مرشد</h3>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block mb-2 font-medium">التخصص</label>
+                                    <select id="inquiryMajor" class="w-full p-2 border rounded">
+                                        <option value="">اختر التخصص</option>
+                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
+                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
+                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-medium">المستوى</label>
+                                    <select id="inquiryLevel" class="w-full p-2 border rounded">
+                                        <option value="">اختر المستوى</option>
+                                        <option value="1">سنة أولى</option>
+                                        <option value="2">سنة ثانية</option>
+                                        <option value="3">سنة ثالثة</option>
+                                        <option value="4">سنة رابعة</option>
+                                        <option value="5">سنة خامسة</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block mb-2 font-medium">الجنس</label>
+                                    <select id="inquiryGender" class="w-full p-2 border rounded">
+                                        <option value="">اختر الجنس</option>
+                                        <option value="male">ذكر</option>
+                                        <option value="female">أنثى</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button id="findAdvisorBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                <i class="fas fa-search mr-2"></i> البحث عن المرشد
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="advisorResult" class="bg-white rounded-lg shadow p-6 hidden">
+                        <h3 class="text-xl font-bold mb-4">نتيجة البحث</h3>
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 p-4 rounded-full mr-4">
+                                <i class="fas fa-user-tie text-blue-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold" id="advisorNameResult">اسم المرشد</h4>
+                                <p class="text-gray-600" id="advisorDetailsResult">تفاصيل المرشد</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case Details Modal -->
+                <div id="caseDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                    <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold">تفاصيل القضية</h3>
+                            <button id="closeDetailsModal" class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <h4 class="font-bold text-gray-700">معلومات الطالب</h4>
+                                <p id="detailStudentName" class="mt-2"></p>
+                                <p id="detailStudentId"></p>
+                                <p id="detailMajor"></p>
+                                <p id="detailLevel"></p>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-700">معلومات القضية</h4>
+                                <p id="detailCaseId" class="mt-2"></p>
+                                <p id="detailStatus"></p>
+                                <p id="detailDate"></p>
+                                <p id="detailAdvisor"></p>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-700">وصف القضية</h4>
+                            <p id="detailDescription" class="mt-2 bg-gray-50 p-4 rounded"></p>
+                        </div>
+                        <div class="mb-6">
+                            <h4 class="font-bold text-gray-700">الرد على الطالب</h4>
+                            <textarea id="responseText" class="w-full p-2 border rounded mt-2" rows="3" placeholder="اكتب ردك هنا..."></textarea>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="flex space-x-2">
+                                <button id="whatsappBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
+                                    <i class="fab fa-whatsapp mr-2"></i> واتساب
+                                </button>
+                                <button id="callBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                                    <i class="fas fa-phone mr-2"></i> اتصال
+                                </button>
+                            </div>
+                            <div>
+                                <button id="sendResponseBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                    <i class="fas fa-paper-plane mr-2"></i> إرسال الرد
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for cases
+        const sampleCases = [
+            {
+                id: 1,
+                studentName: "أحمد محمد",
+                studentId: "202010001",
+                gender: "male",
+                major: "cyber_security",
+                level: "2",
+                description: "مشكلة في تسجيل المقررات",
+                status: "open",
+                date: "2023-05-15",
+                advisor: "محمود الشيخ خليل"
+            },
+            {
+                id: 2,
+                studentName: "سارة عبدالله",
+                studentId: "202010002",
+                gender: "female",
+                major: "cyber_security",
+                level: "4",
+                description: "استفسار عن التدريب الصيفي",
+                status: "open",
+                date: "2023-06-02",
+                advisor: "سناء الصايغ"
+            },
+            {
+                id: 3,
+                studentName: "خالد علي",
+                studentId: "202010003",
+                gender: "male",
+                major: "data_science_ai",
+                level: "3",
+                description: "مشكلة في الوصول إلى المختبر",
+                status: "closed",
+                date: "2023-04-20",
+                advisor: "محمد الطهراوي"
+            },
+            {
+                id: 4,
+                studentName: "ريم أحمد",
+                studentId: "202010004",
+                gender: "female",
+                major: "diploma_security",
+                level: "1",
+                description: "استفسار عن المنح الدراسية",
+                status: "open",
+                date: "2023-06-10",
+                advisor: "علاء القزاز"
+            }
+        ];
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation
+            const dashboardLink = document.getElementById('dashboardLink');
+            const casesLink = document.getElementById('casesLink');
+            const reportsLink = document.getElementById('reportsLink');
+            const inquiriesLink = document.getElementById('inquiriesLink');
+            
+            const dashboardSection = document.getElementById('dashboardSection');
+            const casesSection = document.getElementById('casesSection');
+            const reportsSection = document.getElementById('reportsSection');
+            const inquiriesSection = document.getElementById('inquiriesSection');
+            
+            // Sidebar toggle for mobile
+            const toggleSidebar = document.getElementById('toggleSidebar');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const sidebar = document.querySelector('.sidebar');
+            
+            // Case management
+            const addCaseBtn = document.getElementById('addCaseBtn');
+            const addCaseModal = document.getElementById('addCaseModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelCaseBtn = document.getElementById('cancelCaseBtn');
+            const caseForm = document.getElementById('caseForm');
+            const casesTableBody = document.getElementById('casesTableBody');
+            
+            // Reports
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            const reportsTableBody = document.getElementById('reportsTableBody');
+            
+            // Inquiries
+            const findAdvisorBtn = document.getElementById('findAdvisorBtn');
+            const advisorResult = document.getElementById('advisorResult');
+            const advisorNameResult = document.getElementById('advisorNameResult');
+            const advisorDetailsResult = document.getElementById('advisorDetailsResult');
+
+            // Navigation handlers
+            dashboardLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection(dashboardSection);
+            });
+            
+            casesLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection(casesSection);
+                renderCasesTable();
+            });
+            
+            reportsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection(reportsSection);
+                renderReportsTable();
+            });
+            
+            inquiriesLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showSection(inquiriesSection);
+            });
+
+            // Show initial section
+            showSection(dashboardSection);
+
+            // Add event listeners for status cards
+            document.getElementById('totalCasesCard').addEventListener('click', function() {
+                showSection(casesSection);
+            });
+
+            document.getElementById('openCasesCard').addEventListener('click', function() {
+                showSection(casesSection, 'open');
+            });
+
+            document.getElementById('closedCasesCard').addEventListener('click', function() {
+                showSection(casesSection, 'closed');
+            });
+
+            // Sidebar toggle
+            toggleSidebar.addEventListener('click', function() {
+                sidebar.classList.add('open');
+            });
+            
+            closeSidebar.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+            });
+
+            // Case management
+            addCaseBtn.addEventListener('click', function() {
+                addCaseModal.classList.remove('hidden');
+            });
+            
+            closeModal.addEventListener('click', function() {
+                addCaseModal.classList.add('hidden');
+            });
+            
+            cancelCaseBtn.addEventListener('click', function() {
+                addCaseModal.classList.add('hidden');
+            });
+            
+            caseForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real app, you would save the case to a database
+                alert('تم حفظ القضية بنجاح');
+                addCaseModal.classList.add('hidden');
+                caseForm.reset();
+                renderCasesTable();
+            });
+
+            // Reports
+            generateReportBtn.addEventListener('click', function() {
+                renderReportsTable();
+            });
+
+            // Inquiries
+            findAdvisorBtn.addEventListener('click', function() {
+                const major = document.getElementById('inquiryMajor').value;
+                const level = document.getElementById('inquiryLevel').value;
+                const gender = document.getElementById('inquiryGender').value;
+                
+                if (!major || !level || !gender) {
+                    alert('الرجاء اختيار جميع الحقول');
+                    return;
+                }
+                
+                let advisor = '';
+                let details = '';
+                
+                if (major === 'cyber_security') {
+                    if (gender === 'male') {
+                        if (level >= 1 && level <= 3) {
+                            advisor = 'محمود الشيخ خليل';
+                            details = 'مرشد لطلاب هندسة أمن المعلومات السيبراني من المستوى الأول إلى الثالث';
+                        } else {
+                            advisor = 'محمد مطر';
+                            details = 'مرشد لطلاب هندسة أمن المعلومات السيبراني من المستوى الرابع إلى الخامس';
+                        }
+                    } else {
+                        advisor = 'سناء الصايغ';
+                        details = 'مرشدة لطالبات هندسة أمن المعلومات السيبراني لجميع المستويات';
+                    }
+                } else if (major === 'data_science_ai') {
+                    advisor = 'محمد الطهراوي';
+                    details = 'مرشد لطلاب وطالبات علم البيانات والذكاء الاصطناعي لجميع المستويات';
+                } else if (major === 'diploma_security') {
+                    if (gender === 'male') {
+                        advisor = 'تامر اليازوري';
+                        details = 'مرشد لطلاب دبلوم أمن المعلومات لجميع المستويات';
+                    } else {
+                        advisor = 'علاء القزاز';
+                        details = 'مرشدة لطالبات دبلوم أمن المعلومات لجميع المستويات';
+                    }
+                }
+                
+                advisorNameResult.textContent = advisor;
+                advisorDetailsResult.textContent = details;
+                advisorResult.classList.remove('hidden');
+            });
+
+            // Helper functions
+            function showSection(section, filter = null) {
+                dashboardSection.classList.add('hidden');
+                casesSection.classList.add('hidden');
+                reportsSection.classList.add('hidden');
+                inquiriesSection.classList.add('hidden');
+                
+                section.classList.remove('hidden');
+                
+                if (section === casesSection) {
+                    renderCasesTable(filter);
+                }
+            }
+            
+            function renderCasesTable(filter = null) {
+                casesTableBody.innerHTML = '';
+                
+                const filteredCases = filter ? 
+                    sampleCases.filter(caseItem => caseItem.status === filter) : 
+                    sampleCases;
+                
+                filteredCases.forEach(caseItem => {
+                    const tr = document.createElement('tr');
+                    
+                    // Map major to display name
+                    let majorDisplay;
+                    switch(caseItem.major) {
+                        case 'cyber_security':
+                            majorDisplay = 'هندسة أمن المعلومات السيبراني';
+                            break;
+                        case 'data_science_ai':
+                            majorDisplay = 'علم البيانات والذكاء الاصطناعي';
+                            break;
+                        case 'diploma_security':
+                            majorDisplay = 'دبلوم أمن المعلومات';
+                            break;
+                        default:
+                            majorDisplay = caseItem.major;
+                    }
+                    
+                    // Map level to display name
+                    let levelDisplay;
+                    switch(caseItem.level) {
+                        case '1':
+                            levelDisplay = 'سنة أولى';
+                            break;
+                        case '2':
+                            levelDisplay = 'سنة ثانية';
+                            break;
+                        case '3':
+                            levelDisplay = 'سنة ثالثة';
+                            break;
+                        case '4':
+                            levelDisplay = 'سنة رابعة';
+                            break;
+                        case '5':
+                            levelDisplay = 'سنة خامسة';
+                            break;
+                        default:
+                            levelDisplay = caseItem.level;
+                    }
+                    
+                    // Map status to display and color
+                    let statusDisplay, statusColor;
+                    if (caseItem.status === 'open') {
+                        statusDisplay = 'مفتوحة';
+                        statusColor = 'bg-yellow-100 text-yellow-800';
+                    } else {
+                        statusDisplay = 'مغلقة';
+                        statusColor = 'bg-green-100 text-green-800';
+                    }
+                    
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">${caseItem.id}</td>
+                        <td class="px-6 py-4">${caseItem.studentName}</td>
+                        <td class="px-6 py-4">${majorDisplay}</td>
+                        <td class="px-6 py-4">${levelDisplay}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusDisplay}</span>
+                        </td>
+                        <td class="px-6 py-4">${caseItem.advisor}</td>
+                        <td class="px-6 py-4">
+                            <button class="text-blue-600 hover:text-blue-800 mr-2 view-btn" data-id="${caseItem.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="text-green-600 hover:text-green-800 mr-2 edit-btn" data-id="${caseItem.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800 delete-btn" data-id="${caseItem.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    casesTableBody.appendChild(tr);
+                });
+
+                // Add event listeners to the buttons after rendering
+                // Case Details Modal
+                const caseDetailsModal = document.getElementById('caseDetailsModal');
+                const closeDetailsModal = document.getElementById('closeDetailsModal');
+                const whatsappBtn = document.getElementById('whatsappBtn');
+                const callBtn = document.getElementById('callBtn');
+                const sendResponseBtn = document.getElementById('sendResponseBtn');
+
+                closeDetailsModal.addEventListener('click', function() {
+                    caseDetailsModal.classList.add('hidden');
+                });
+
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const caseId = this.getAttribute('data-id');
+                        const caseItem = sampleCases.find(c => c.id == caseId);
+                        
+                        // Populate modal with case details
+                        document.getElementById('detailStudentName').textContent = `الاسم: ${caseItem.studentName}`;
+                        document.getElementById('detailStudentId').textContent = `رقم الطالب: ${caseItem.studentId}`;
+                        
+                        let majorDisplay;
+                        switch(caseItem.major) {
+                            case 'cyber_security': majorDisplay = 'هندسة أمن المعلومات السيبراني'; break;
+                            case 'data_science_ai': majorDisplay = 'علم البيانات والذكاء الاصطناعي'; break;
+                            case 'diploma_security': majorDisplay = 'دبلوم أمن المعلومات'; break;
+                            default: majorDisplay = caseItem.major;
+                        }
+                        document.getElementById('detailMajor').textContent = `التخصص: ${majorDisplay}`;
+                        
+                        let levelDisplay;
+                        switch(caseItem.level) {
+                            case '1': levelDisplay = 'سنة أولى'; break;
+                            case '2': levelDisplay = 'سنة ثانية'; break;
+                            case '3': levelDisplay = 'سنة ثالثة'; break;
+                            case '4': levelDisplay = 'سنة رابعة'; break;
+                            case '5': levelDisplay = 'سنة خامسة'; break;
+                            default: levelDisplay = caseItem.level;
+                        }
+                        document.getElementById('detailLevel').textContent = `المستوى: ${levelDisplay}`;
+                        
+                        document.getElementById('detailCaseId').textContent = `رقم القضية: ${caseItem.id}`;
+                        document.getElementById('detailStatus').textContent = `الحالة: ${caseItem.status === 'open' ? 'مفتوحة' : 'مغلقة'}`;
+                        document.getElementById('detailDate').textContent = `تاريخ الإنشاء: ${caseItem.date}`;
+                        document.getElementById('detailAdvisor').textContent = `المرشد: ${caseItem.advisor}`;
+                        document.getElementById('detailDescription').textContent = caseItem.description;
+                        
+                        // Clear response field
+                        document.getElementById('responseText').value = '';
+                        
+                        // Show modal
+                        caseDetailsModal.classList.remove('hidden');
+                    });
+                });
+
+                // WhatsApp button action
+                whatsappBtn.addEventListener('click', function() {
+                    // In a real app, you would use the student's phone number from the case data
+                    alert('سيتم فتح تطبيق واتساب لإرسال رسالة للطالب');
+                    // window.open(`https://wa.me/966${studentPhoneNumber}?text=${encodeURIComponent(responseText)}`);
+                });
+
+                // Call button action
+                callBtn.addEventListener('click', function() {
+                    // In a real app, you would use the student's phone number from the case data
+                    alert('سيتم الاتصال بالطالب على الرقم المسجل');
+                    // window.open(`tel:${studentPhoneNumber}`);
+                });
+
+                // Send response button action
+                sendResponseBtn.addEventListener('click', function() {
+                    const responseText = document.getElementById('responseText').value;
+                    if (!responseText) {
+                        alert('الرجاء كتابة رد قبل الإرسال');
+                        return;
+                    }
+                    
+                    // In a real app, you would save this response to the database
+                    alert('تم إرسال الرد بنجاح');
+                    caseDetailsModal.classList.add('hidden');
+                });
+
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const caseId = this.getAttribute('data-id');
+                        const caseItem = sampleCases.find(c => c.id == caseId);
+                        alert(`تعديل القضية: ${caseItem.studentName}\nسيتم فتح نموذج التعديل`);
+                        // In a real app, you would populate the edit form with case data
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const caseId = this.getAttribute('data-id');
+                        if (confirm('هل أنت متأكد من حذف هذه القضية؟')) {
+                            // In a real app, you would remove from database
+                            const index = sampleCases.findIndex(c => c.id == caseId);
+                            if (index !== -1) {
+                                sampleCases.splice(index, 1);
+                                renderCasesTable();
+                                alert('تم حذف القضية بنجاح');
+                            }
+                        }
+                    });
+                });
+            }
+            
+            function renderReportsTable() {
+                reportsTableBody.innerHTML = '';
+                
+                const majorFilter = document.getElementById('reportMajorFilter').value;
+                const levelFilter = document.getElementById('reportLevelFilter').value;
+                const statusFilter = document.getElementById('reportStatusFilter').value;
+                
+                const filteredCases = sampleCases.filter(caseItem => {
+                    return (!majorFilter || caseItem.major === majorFilter) &&
+                           (!levelFilter || caseItem.level === levelFilter) &&
+                           (!statusFilter || caseItem.status === statusFilter);
+                });
+                
+                filteredCases.forEach(caseItem => {
+                    const tr = document.createElement('tr');
+                    
+                    // Map major to display name
+                    let majorDisplay;
+                    switch(caseItem.major) {
+                        case 'cyber_security':
+                            majorDisplay = 'هندسة أمن المعلومات السيبراني';
+                            break;
+                        case 'data_science_ai':
+                            majorDisplay = 'علم البيانات والذكاء الاصطناعي';
+                            break;
+                        case 'diploma_security':
+                            majorDisplay = 'دبلوم أمن المعلومات';
+                            break;
+                        default:
+                            majorDisplay = caseItem.major;
+                    }
+                    
+                    // Map level to display name
+                    let levelDisplay;
+                    switch(caseItem.level) {
+                        case '1':
+                            levelDisplay = 'سنة أولى';
+                            break;
+                        case '2':
+                            levelDisplay = 'سنة ثانية';
+                            break;
+                        case '3':
+                            levelDisplay = 'سنة ثالثة';
+                            break;
+                        case '4':
+                            levelDisplay = 'سنة رابعة';
+                            break;
+                        case '5':
+                            levelDisplay = 'سنة خامسة';
+                            break;
+                        default:
+                            levelDisplay = caseItem.level;
+                    }
+                    
+                    // Map status to display
+                    let statusDisplay = caseItem.status === 'open' ? 'مفتوحة' : 'مغلقة';
+                    
+                    tr.innerHTML = `
+                        <td class="px-6 py-4">${caseItem.id}</td>
+                        <td class="px-6 py-4">${caseItem.studentName}</td>
+                        <td class="px-6 py-4">${majorDisplay}</td>
+                        <td class="px-6 py-4">${levelDisplay}</td>
+                        <td class="px-6 py-4">${statusDisplay}</td>
+                        <td class="px-6 py-4">${caseItem.date}</td>
+                        <td class="px-6 py-4">${caseItem.advisor}</td>
+                    `;
+                    
+                    reportsTableBody.appendChild(tr);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
