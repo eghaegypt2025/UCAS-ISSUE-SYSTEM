@@ -1,880 +1,339 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام القضايا الطلابية</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
-        body {
-            font-family: 'Tajawal', sans-serif;
-        }
-        .sidebar {
-            transition: all 0.3s;
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>وثيقة خطة المشروع — نظام تصنيف القضايا ودمج واتساب للأعمال</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Cairo', Arial, sans-serif; background: #f0f4f8; color: #1e293b; direction: rtl; }
+  .gdoc-bar {
+    position: sticky; top: 0; z-index: 999;
+    background: #1a73e8; color: #fff;
+    padding: 14px 30px; display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .gdoc-bar span { font-size: 15px; font-weight: 600; }
+  .gdoc-bar .btn-group { display: flex; gap: 12px; }
+  .gdoc-bar a, .gdoc-bar button {
+    background: #fff; color: #1a73e8; border: none; border-radius: 8px;
+    padding: 8px 20px; font-family: 'Cairo', Arial, sans-serif; font-size: 14px;
+    font-weight: 700; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
+  }
+  .gdoc-bar a:hover, .gdoc-bar button:hover { background: #e8f0fe; }
+  .gdoc-bar .btn-print { background: rgba(255,255,255,0.15); color: #fff; }
+  .gdoc-bar .btn-print:hover { background: rgba(255,255,255,0.25); }
+  .page-wrapper {
+    max-width: 900px; margin: 40px auto;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.10); overflow: hidden;
+  }
+  .doc-header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1a56c4 60%, #0ea5e9 100%);
+    padding: 50px 60px 40px; color: #fff;
+  }
+  .doc-header .badge {
+    display: inline-block; background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 30px;
+    padding: 5px 16px; font-size: 13px; margin-bottom: 18px;
+  }
+  .doc-header h1 { font-size: 26px; font-weight: 900; line-height: 1.5; margin-bottom: 10px; }
+  .doc-header h2 { font-size: 16px; font-weight: 400; opacity: 0.85; margin-bottom: 30px; }
+  .doc-meta {
+    display: flex; gap: 30px; flex-wrap: wrap;
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 20px; font-size: 13px; opacity: 0.85;
+  }
+  .doc-meta span strong { font-weight: 700; }
+  .doc-body { padding: 50px 60px; }
+  h2.sec-title {
+    font-size: 19px; font-weight: 800; color: #1e3a8a;
+    border-right: 5px solid #1e3a8a; padding-right: 14px;
+    margin: 40px 0 20px;
+  }
+  h3.sub-title { font-size: 15px; font-weight: 700; color: #1e40af; margin: 22px 0 10px; }
+  p, li { font-size: 14px; line-height: 1.9; color: #334155; }
+  ul { padding-right: 22px; margin: 8px 0; }
+  li { margin-bottom: 4px; }
+  .phase-card {
+    background: #f8fafc; border: 1px solid #e2e8f0;
+    border-radius: 14px; padding: 22px 26px; margin-bottom: 18px;
+  }
+  .phase-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .phase-badge {
+    background: #1e3a8a; color: #fff; border-radius: 8px;
+    padding: 5px 13px; font-size: 13px; font-weight: 700;
+  }
+  .phase-title { font-size: 15px; font-weight: 700; color: #1e3a8a; }
+  .phase-duration {
+    margin-right: auto; background: #dbeafe; color: #1e40af;
+    border-radius: 20px; padding: 4px 13px; font-size: 13px; font-weight: 600;
+  }
+  .task-row {
+    display: flex; gap: 10px; padding: 10px 13px; border-radius: 8px;
+    margin-bottom: 6px; background: #fff; border: 1px solid #e2e8f0; align-items: flex-start;
+  }
+  .task-code {
+    background: #1e3a8a; color: #fff; border-radius: 6px;
+    padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; margin-top: 2px;
+  }
+  .task-name { font-weight: 700; font-size: 14px; color: #1e293b; }
+  .task-meta { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .cat-card { border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; margin-bottom: 18px; }
+  .cat-header {
+    padding: 13px 20px; font-weight: 800; font-size: 14px;
+    display: flex; align-items: center; gap: 10px; color: #fff;
+  }
+  .cat-header .routing {
+    margin-right: auto; font-size: 11px; font-weight: 500;
+    background: rgba(255,255,255,0.15); border-radius: 20px; padding: 2px 10px;
+  }
+  .bg-academic  { background: linear-gradient(90deg, #1e3a8a, #2563eb); }
+  .bg-financial { background: linear-gradient(90deg, #065f46, #059669); }
+  .bg-admin     { background: linear-gradient(90deg, #6d28d9, #8b5cf6); }
+  .bg-complaint { background: linear-gradient(90deg, #9f1239, #e11d48); }
+  .bg-tech      { background: linear-gradient(90deg, #0c4a6e, #0284c7); }
+  .cat-body { background: #fff; }
+  .sub-row {
+    display: grid; grid-template-columns: 80px 150px 1fr;
+    gap: 10px; padding: 11px 20px; border-bottom: 1px solid #f1f5f9;
+    align-items: start; font-size: 13px;
+  }
+  .sub-row:last-child { border-bottom: none; }
+  .sub-row .code { font-weight: 700; color: #64748b; font-size: 11px; padding-top: 2px; }
+  .sub-row .name { font-weight: 700; color: #1e293b; }
+  .sub-row .desc { color: #64748b; line-height: 1.6; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+  thead tr { background: #1e3a8a; color: #fff; }
+  thead th { padding: 11px 15px; font-weight: 700; text-align: right; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:nth-child(odd)  { background: #fff; }
+  tbody td { padding: 10px 15px; border-bottom: 1px solid #f1f5f9; }
+  .alert {
+    border-radius: 10px; padding: 14px 18px; margin: 16px 0;
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; line-height: 1.7;
+  }
+  .alert-danger { background: #fff1f2; border: 1px solid #fecdd3; color: #881337; }
+  .alert-info   { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .alert-icon   { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+  .timeline { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; }
+  .tl-item {
+    background: #eff6ff; border: 2px solid #bfdbfe;
+    border-radius: 10px; padding: 12px 8px; text-align: center;
+  }
+  .tl-phase { font-size: 11px; font-weight: 700; color: #1e40af; margin-bottom: 4px; }
+  .tl-weeks { font-size: 22px; font-weight: 900; color: #1e3a8a; }
+  .tl-label { font-size: 10px; color: #64748b; margin-top: 4px; }
+  .tl-total { background: #1e3a8a; border-color: #1e3a8a; }
+  .tl-total .tl-phase { color: rgba(255,255,255,0.8); }
+  .tl-total .tl-weeks { color: #fff; }
+  .tl-total .tl-label { color: rgba(255,255,255,0.7); }
+  .doc-footer {
+    text-align: center; padding: 28px 60px;
+    border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8;
+  }
+  @media print {
+    .gdoc-bar { display: none; }
+    body { background: #fff; }
+    .page-wrapper { box-shadow: none; border-radius: 0; margin: 0; }
+    .doc-body { padding: 30px 40px; }
+    .doc-header { padding: 30px 40px; }
+    .phase-card { break-inside: avoid; }
+    .cat-card { break-inside: avoid; }
+  }
+</style>
 </head>
-<body class="bg-gray-100">
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <div class="sidebar bg-blue-800 text-white w-64 fixed h-full overflow-y-auto">
-            <div class="p-4 flex items-center justify-between border-b border-blue-700">
-                <h1 class="text-xl font-bold">نظام القضايا</h1>
-                <button id="closeSidebar" class="md:hidden">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <nav class="p-4">
-                <ul>
-                    <li class="mb-2">
-                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="dashboardLink">
-                            <i class="fas fa-home mr-2"></i> لوحة التحكم
-                        </a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="casesLink">
-                            <i class="fas fa-file-alt mr-2"></i> القضايا الطلابية
-                        </a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="reportsLink">
-                            <i class="fas fa-chart-bar mr-2"></i> التقارير
-                        </a>
-                    </li>
-                    <li class="mb-2">
-                        <a href="#" class="block p-2 rounded hover:bg-blue-700 transition" id="inquiriesLink">
-                            <i class="fas fa-question-circle mr-2"></i> الاستفسارات
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
-        <!-- Main Content -->
-        <div class="flex-1 md:mr-64">
-            <!-- Header -->
-            <header class="bg-white shadow p-4 flex justify-between items-center">
-                <button id="toggleSidebar" class="md:hidden">
-                    <i class="fas fa-bars text-blue-800 text-xl"></i>
-                </button>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <i class="fas fa-bell text-gray-600 text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">3</span>
-                    </div>
-                    <div class="flex items-center">
-                        <img src="https://via.placeholder.com/40" alt="Profile" class="rounded-full w-10 h-10 hover:scale-110 transition-transform duration-200 cursor-pointer">
-                        <span class="mr-2">مسؤول النظام</span>
-                    </div>
-                </div>
-            </header>
-
-            <!-- Content Area -->
-            <main class="p-4">
-                <!-- Dashboard Section -->
-                <div id="dashboardSection">
-                    <h2 class="text-2xl font-bold mb-6 text-blue-800">لوحة التحكم</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="totalCasesCard">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-gray-500">إجمالي القضايا</h3>
-                                    <p class="text-3xl font-bold">124</p>
-                                </div>
-                                <div class="bg-blue-100 p-3 rounded-full">
-                                    <i class="fas fa-file-alt text-blue-600 text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="openCasesCard">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-gray-500">قضايا مفتوحة</h3>
-                                    <p class="text-3xl font-bold">42</p>
-                                </div>
-                                <div class="bg-green-100 p-3 rounded-full">
-                                    <i class="fas fa-folder-open text-green-600 text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow cursor-pointer" id="closedCasesCard">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-gray-500">قضايا مغلقة</h3>
-                                    <p class="text-3xl font-bold">82</p>
-                                </div>
-                                <div class="bg-red-100 p-3 rounded-full">
-                                    <i class="fas fa-check-circle text-red-600 text-xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cases Section -->
-                <div id="casesSection" class="hidden">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-blue-800">إدارة القضايا الطلابية</h2>
-                        <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition" id="addCaseBtn">
-                            <i class="fas fa-plus mr-2"></i> إضافة قضية جديدة
-                        </button>
-                    </div>
-
-                    <!-- Add Case Modal -->
-                    <div id="addCaseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-                        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-xl font-bold">إضافة قضية جديدة</h3>
-                                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                            <form id="caseForm">
-                                <div class="mb-4">
-                                    <label for="studentName" class="block mb-2 font-medium">اسم الطالب</label>
-                                    <input type="text" id="studentName" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="studentId" class="block mb-2 font-medium">رقم الطالب</label>
-                                    <input type="text" id="studentId" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="gender" class="block mb-2 font-medium">الجنس</label>
-                                    <select id="gender" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">اختر الجنس</option>
-                                        <option value="male">ذكر</option>
-                                        <option value="female">أنثى</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="major" class="block mb-2 font-medium">التخصص</label>
-                                    <select id="major" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">اختر التخصص</option>
-                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
-                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
-                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="level" class="block mb-2 font-medium">المستوى الدراسي</label>
-                                    <select id="level" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                                        <option value="">اختر المستوى</option>
-                                        <option value="1">سنة أولى</option>
-                                        <option value="2">سنة ثانية</option>
-                                        <option value="3">سنة ثالثة</option>
-                                        <option value="4">سنة رابعة</option>
-                                        <option value="5">سنة خامسة</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="caseDescription" class="block mb-2 font-medium">وصف القضية</label>
-                                    <textarea id="caseDescription" rows="4" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
-                                </div>
-                                <div class="flex justify-end">
-                                    <button type="button" id="cancelCaseBtn" class="px-4 py-2 border rounded mr-2 hover:bg-gray-100 transition">إلغاء</button>
-                                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">حفظ</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Cases Table -->
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">رقم القضية</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">اسم الطالب</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">التخصص</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المستوى</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">حالة القضية</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المرشد</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">الإجراءات</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200" id="casesTableBody">
-                                    <!-- Cases will be added here dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reports Section -->
-                <div id="reportsSection" class="hidden">
-                    <h2 class="text-2xl font-bold mb-6 text-blue-800">تقارير القضايا الطلابية</h2>
-                    
-                    <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
-                        <div class="p-4 border-b">
-                            <h3 class="font-bold">تصفية التقارير</h3>
-                        </div>
-                        <div class="p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                <div>
-                                    <label class="block mb-2 font-medium">التخصص</label>
-                                    <select id="reportMajorFilter" class="w-full p-2 border rounded">
-                                        <option value="">جميع التخصصات</option>
-                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
-                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
-                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block mb-2 font-medium">المستوى</label>
-                                    <select id="reportLevelFilter" class="w-full p-2 border rounded">
-                                        <option value="">جميع المستويات</option>
-                                        <option value="1">سنة أولى</option>
-                                        <option value="2">سنة ثانية</option>
-                                        <option value="3">سنة ثالثة</option>
-                                        <option value="4">سنة رابعة</option>
-                                        <option value="5">سنة خامسة</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block mb-2 font-medium">حالة القضية</label>
-                                    <select id="reportStatusFilter" class="w-full p-2 border rounded">
-                                        <option value="">جميع الحالات</option>
-                                        <option value="open">مفتوحة</option>
-                                        <option value="closed">مغلقة</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button id="generateReportBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                                <i class="fas fa-file-export mr-2"></i> توليد التقرير
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-lg shadow overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">رقم القضية</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">اسم الطالب</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">التخصص</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المستوى</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">حالة القضية</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">تاريخ الإنشاء</th>
-                                        <th class="px-6 py-3 text-right font-medium text-gray-500">المرشد</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200" id="reportsTableBody">
-                                    <!-- Reports will be added here dynamically -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Inquiries Section -->
-                <div id="inquiriesSection" class="hidden">
-                    <h2 class="text-2xl font-bold mb-6 text-blue-800">الاستفسارات</h2>
-                    
-                    <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
-                        <div class="p-4 border-b">
-                            <h3 class="font-bold">بحث عن مرشد</h3>
-                        </div>
-                        <div class="p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block mb-2 font-medium">التخصص</label>
-                                    <select id="inquiryMajor" class="w-full p-2 border rounded">
-                                        <option value="">اختر التخصص</option>
-                                        <option value="cyber_security">هندسة أمن المعلومات السيبراني</option>
-                                        <option value="data_science_ai">علم البيانات والذكاء الاصطناعي</option>
-                                        <option value="diploma_security">دبلوم أمن المعلومات</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block mb-2 font-medium">المستوى</label>
-                                    <select id="inquiryLevel" class="w-full p-2 border rounded">
-                                        <option value="">اختر المستوى</option>
-                                        <option value="1">سنة أولى</option>
-                                        <option value="2">سنة ثانية</option>
-                                        <option value="3">سنة ثالثة</option>
-                                        <option value="4">سنة رابعة</option>
-                                        <option value="5">سنة خامسة</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block mb-2 font-medium">الجنس</label>
-                                    <select id="inquiryGender" class="w-full p-2 border rounded">
-                                        <option value="">اختر الجنس</option>
-                                        <option value="male">ذكر</option>
-                                        <option value="female">أنثى</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button id="findAdvisorBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                                <i class="fas fa-search mr-2"></i> البحث عن المرشد
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="advisorResult" class="bg-white rounded-lg shadow p-6 hidden">
-                        <h3 class="text-xl font-bold mb-4">نتيجة البحث</h3>
-                        <div class="flex items-center">
-                            <div class="bg-blue-100 p-4 rounded-full mr-4">
-                                <i class="fas fa-user-tie text-blue-600 text-2xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold" id="advisorNameResult">اسم المرشد</h4>
-                                <p class="text-gray-600" id="advisorDetailsResult">تفاصيل المرشد</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Case Details Modal -->
-                <div id="caseDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-                    <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-xl font-bold">تفاصيل القضية</h3>
-                            <button id="closeDetailsModal" class="text-gray-500 hover:text-gray-700">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div>
-                                <h4 class="font-bold text-gray-700">معلومات الطالب</h4>
-                                <p id="detailStudentName" class="mt-2"></p>
-                                <p id="detailStudentId"></p>
-                                <p id="detailMajor"></p>
-                                <p id="detailLevel"></p>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-gray-700">معلومات القضية</h4>
-                                <p id="detailCaseId" class="mt-2"></p>
-                                <p id="detailStatus"></p>
-                                <p id="detailDate"></p>
-                                <p id="detailAdvisor"></p>
-                            </div>
-                        </div>
-                        <div class="mb-6">
-                            <h4 class="font-bold text-gray-700">وصف القضية</h4>
-                            <p id="detailDescription" class="mt-2 bg-gray-50 p-4 rounded"></p>
-                        </div>
-                        <div class="mb-6">
-                            <h4 class="font-bold text-gray-700">الرد على الطالب</h4>
-                            <textarea id="responseText" class="w-full p-2 border rounded mt-2" rows="3" placeholder="اكتب ردك هنا..."></textarea>
-                        </div>
-                        <div class="flex justify-between">
-                            <div class="flex space-x-2">
-                                <button id="whatsappBtn" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition">
-                                    <i class="fab fa-whatsapp mr-2"></i> واتساب
-                                </button>
-                                <button id="callBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                                    <i class="fas fa-phone mr-2"></i> اتصال
-                                </button>
-                            </div>
-                            <div>
-                                <button id="sendResponseBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                                    <i class="fas fa-paper-plane mr-2"></i> إرسال الرد
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </div>
+<body>
+<div class="gdoc-bar">
+  <span>📄 وثيقة خطة مشروع UCAS — نظام القضايا الطلابية</span>
+  <div class="btn-group">
+    <button class="btn-print" onclick="window.print()">🖨️ طباعة / تصدير PDF</button>
+    <a href="https://docs.google.com/document/create" target="_blank">📝 فتح Google Docs</a>
+  </div>
+</div>
+<div class="page-wrapper">
+  <div class="doc-header">
+    <div class="badge">وثيقة تخطيط رسمية — الإصدار 1.0</div>
+    <h1>وثيقة خطة مشروع<br>نظام تصنيف القضايا الهرمي ودمج قناة واتساب للأعمال</h1>
+    <h2>الكلية الجامعية للعلوم التطبيقية (UCAS) — نظام القضايا الطلابية</h2>
+    <div class="doc-meta">
+      <span><strong>الإعداد:</strong> فريق تطوير نظام القضايا الطلابية</span>
+      <span><strong>التاريخ:</strong> أغسطس 2026</span>
+      <span><strong>الإصدار:</strong> v1.0</span>
+      <span><strong>المدة الإجمالية:</strong> 7 أسابيع</span>
     </div>
-
-    <script>
-        // Sample data for cases
-        const sampleCases = [
-            {
-                id: 1,
-                studentName: "أحمد محمد",
-                studentId: "202010001",
-                gender: "male",
-                major: "cyber_security",
-                level: "2",
-                description: "مشكلة في تسجيل المقررات",
-                status: "open",
-                date: "2023-05-15",
-                advisor: "محمود الشيخ خليل"
-            },
-            {
-                id: 2,
-                studentName: "سارة عبدالله",
-                studentId: "202010002",
-                gender: "female",
-                major: "cyber_security",
-                level: "4",
-                description: "استفسار عن التدريب الصيفي",
-                status: "open",
-                date: "2023-06-02",
-                advisor: "سناء الصايغ"
-            },
-            {
-                id: 3,
-                studentName: "خالد علي",
-                studentId: "202010003",
-                gender: "male",
-                major: "data_science_ai",
-                level: "3",
-                description: "مشكلة في الوصول إلى المختبر",
-                status: "closed",
-                date: "2023-04-20",
-                advisor: "محمد الطهراوي"
-            },
-            {
-                id: 4,
-                studentName: "ريم أحمد",
-                studentId: "202010004",
-                gender: "female",
-                major: "diploma_security",
-                level: "1",
-                description: "استفسار عن المنح الدراسية",
-                status: "open",
-                date: "2023-06-10",
-                advisor: "علاء القزاز"
-            }
-        ];
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Navigation
-            const dashboardLink = document.getElementById('dashboardLink');
-            const casesLink = document.getElementById('casesLink');
-            const reportsLink = document.getElementById('reportsLink');
-            const inquiriesLink = document.getElementById('inquiriesLink');
-            
-            const dashboardSection = document.getElementById('dashboardSection');
-            const casesSection = document.getElementById('casesSection');
-            const reportsSection = document.getElementById('reportsSection');
-            const inquiriesSection = document.getElementById('inquiriesSection');
-            
-            // Sidebar toggle for mobile
-            const toggleSidebar = document.getElementById('toggleSidebar');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const sidebar = document.querySelector('.sidebar');
-            
-            // Case management
-            const addCaseBtn = document.getElementById('addCaseBtn');
-            const addCaseModal = document.getElementById('addCaseModal');
-            const closeModal = document.getElementById('closeModal');
-            const cancelCaseBtn = document.getElementById('cancelCaseBtn');
-            const caseForm = document.getElementById('caseForm');
-            const casesTableBody = document.getElementById('casesTableBody');
-            
-            // Reports
-            const generateReportBtn = document.getElementById('generateReportBtn');
-            const reportsTableBody = document.getElementById('reportsTableBody');
-            
-            // Inquiries
-            const findAdvisorBtn = document.getElementById('findAdvisorBtn');
-            const advisorResult = document.getElementById('advisorResult');
-            const advisorNameResult = document.getElementById('advisorNameResult');
-            const advisorDetailsResult = document.getElementById('advisorDetailsResult');
-
-            // Navigation handlers
-            dashboardLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showSection(dashboardSection);
-            });
-            
-            casesLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showSection(casesSection);
-                renderCasesTable();
-            });
-            
-            reportsLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showSection(reportsSection);
-                renderReportsTable();
-            });
-            
-            inquiriesLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showSection(inquiriesSection);
-            });
-
-            // Show initial section
-            showSection(dashboardSection);
-
-            // Add event listeners for status cards
-            document.getElementById('totalCasesCard').addEventListener('click', function() {
-                showSection(casesSection);
-            });
-
-            document.getElementById('openCasesCard').addEventListener('click', function() {
-                showSection(casesSection, 'open');
-            });
-
-            document.getElementById('closedCasesCard').addEventListener('click', function() {
-                showSection(casesSection, 'closed');
-            });
-
-            // Sidebar toggle
-            toggleSidebar.addEventListener('click', function() {
-                sidebar.classList.add('open');
-            });
-            
-            closeSidebar.addEventListener('click', function() {
-                sidebar.classList.remove('open');
-            });
-
-            // Case management
-            addCaseBtn.addEventListener('click', function() {
-                addCaseModal.classList.remove('hidden');
-            });
-            
-            closeModal.addEventListener('click', function() {
-                addCaseModal.classList.add('hidden');
-            });
-            
-            cancelCaseBtn.addEventListener('click', function() {
-                addCaseModal.classList.add('hidden');
-            });
-            
-            caseForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                // In a real app, you would save the case to a database
-                alert('تم حفظ القضية بنجاح');
-                addCaseModal.classList.add('hidden');
-                caseForm.reset();
-                renderCasesTable();
-            });
-
-            // Reports
-            generateReportBtn.addEventListener('click', function() {
-                renderReportsTable();
-            });
-
-            // Inquiries
-            findAdvisorBtn.addEventListener('click', function() {
-                const major = document.getElementById('inquiryMajor').value;
-                const level = document.getElementById('inquiryLevel').value;
-                const gender = document.getElementById('inquiryGender').value;
-                
-                if (!major || !level || !gender) {
-                    alert('الرجاء اختيار جميع الحقول');
-                    return;
-                }
-                
-                let advisor = '';
-                let details = '';
-                
-                if (major === 'cyber_security') {
-                    if (gender === 'male') {
-                        if (level >= 1 && level <= 3) {
-                            advisor = 'محمود الشيخ خليل';
-                            details = 'مرشد لطلاب هندسة أمن المعلومات السيبراني من المستوى الأول إلى الثالث';
-                        } else {
-                            advisor = 'محمد مطر';
-                            details = 'مرشد لطلاب هندسة أمن المعلومات السيبراني من المستوى الرابع إلى الخامس';
-                        }
-                    } else {
-                        advisor = 'سناء الصايغ';
-                        details = 'مرشدة لطالبات هندسة أمن المعلومات السيبراني لجميع المستويات';
-                    }
-                } else if (major === 'data_science_ai') {
-                    advisor = 'محمد الطهراوي';
-                    details = 'مرشد لطلاب وطالبات علم البيانات والذكاء الاصطناعي لجميع المستويات';
-                } else if (major === 'diploma_security') {
-                    if (gender === 'male') {
-                        advisor = 'تامر اليازوري';
-                        details = 'مرشد لطلاب دبلوم أمن المعلومات لجميع المستويات';
-                    } else {
-                        advisor = 'علاء القزاز';
-                        details = 'مرشدة لطالبات دبلوم أمن المعلومات لجميع المستويات';
-                    }
-                }
-                
-                advisorNameResult.textContent = advisor;
-                advisorDetailsResult.textContent = details;
-                advisorResult.classList.remove('hidden');
-            });
-
-            // Helper functions
-            function showSection(section, filter = null) {
-                dashboardSection.classList.add('hidden');
-                casesSection.classList.add('hidden');
-                reportsSection.classList.add('hidden');
-                inquiriesSection.classList.add('hidden');
-                
-                section.classList.remove('hidden');
-                
-                if (section === casesSection) {
-                    renderCasesTable(filter);
-                }
-            }
-            
-            function renderCasesTable(filter = null) {
-                casesTableBody.innerHTML = '';
-                
-                const filteredCases = filter ? 
-                    sampleCases.filter(caseItem => caseItem.status === filter) : 
-                    sampleCases;
-                
-                filteredCases.forEach(caseItem => {
-                    const tr = document.createElement('tr');
-                    
-                    // Map major to display name
-                    let majorDisplay;
-                    switch(caseItem.major) {
-                        case 'cyber_security':
-                            majorDisplay = 'هندسة أمن المعلومات السيبراني';
-                            break;
-                        case 'data_science_ai':
-                            majorDisplay = 'علم البيانات والذكاء الاصطناعي';
-                            break;
-                        case 'diploma_security':
-                            majorDisplay = 'دبلوم أمن المعلومات';
-                            break;
-                        default:
-                            majorDisplay = caseItem.major;
-                    }
-                    
-                    // Map level to display name
-                    let levelDisplay;
-                    switch(caseItem.level) {
-                        case '1':
-                            levelDisplay = 'سنة أولى';
-                            break;
-                        case '2':
-                            levelDisplay = 'سنة ثانية';
-                            break;
-                        case '3':
-                            levelDisplay = 'سنة ثالثة';
-                            break;
-                        case '4':
-                            levelDisplay = 'سنة رابعة';
-                            break;
-                        case '5':
-                            levelDisplay = 'سنة خامسة';
-                            break;
-                        default:
-                            levelDisplay = caseItem.level;
-                    }
-                    
-                    // Map status to display and color
-                    let statusDisplay, statusColor;
-                    if (caseItem.status === 'open') {
-                        statusDisplay = 'مفتوحة';
-                        statusColor = 'bg-yellow-100 text-yellow-800';
-                    } else {
-                        statusDisplay = 'مغلقة';
-                        statusColor = 'bg-green-100 text-green-800';
-                    }
-                    
-                    tr.innerHTML = `
-                        <td class="px-6 py-4">${caseItem.id}</td>
-                        <td class="px-6 py-4">${caseItem.studentName}</td>
-                        <td class="px-6 py-4">${majorDisplay}</td>
-                        <td class="px-6 py-4">${levelDisplay}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs ${statusColor}">${statusDisplay}</span>
-                        </td>
-                        <td class="px-6 py-4">${caseItem.advisor}</td>
-                        <td class="px-6 py-4">
-                            <button class="text-blue-600 hover:text-blue-800 mr-2 view-btn" data-id="${caseItem.id}">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="text-green-600 hover:text-green-800 mr-2 edit-btn" data-id="${caseItem.id}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-800 delete-btn" data-id="${caseItem.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    
-                    casesTableBody.appendChild(tr);
-                });
-
-                // Add event listeners to the buttons after rendering
-                // Case Details Modal
-                const caseDetailsModal = document.getElementById('caseDetailsModal');
-                const closeDetailsModal = document.getElementById('closeDetailsModal');
-                const whatsappBtn = document.getElementById('whatsappBtn');
-                const callBtn = document.getElementById('callBtn');
-                const sendResponseBtn = document.getElementById('sendResponseBtn');
-
-                closeDetailsModal.addEventListener('click', function() {
-                    caseDetailsModal.classList.add('hidden');
-                });
-
-                document.querySelectorAll('.view-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const caseId = this.getAttribute('data-id');
-                        const caseItem = sampleCases.find(c => c.id == caseId);
-                        
-                        // Populate modal with case details
-                        document.getElementById('detailStudentName').textContent = `الاسم: ${caseItem.studentName}`;
-                        document.getElementById('detailStudentId').textContent = `رقم الطالب: ${caseItem.studentId}`;
-                        
-                        let majorDisplay;
-                        switch(caseItem.major) {
-                            case 'cyber_security': majorDisplay = 'هندسة أمن المعلومات السيبراني'; break;
-                            case 'data_science_ai': majorDisplay = 'علم البيانات والذكاء الاصطناعي'; break;
-                            case 'diploma_security': majorDisplay = 'دبلوم أمن المعلومات'; break;
-                            default: majorDisplay = caseItem.major;
-                        }
-                        document.getElementById('detailMajor').textContent = `التخصص: ${majorDisplay}`;
-                        
-                        let levelDisplay;
-                        switch(caseItem.level) {
-                            case '1': levelDisplay = 'سنة أولى'; break;
-                            case '2': levelDisplay = 'سنة ثانية'; break;
-                            case '3': levelDisplay = 'سنة ثالثة'; break;
-                            case '4': levelDisplay = 'سنة رابعة'; break;
-                            case '5': levelDisplay = 'سنة خامسة'; break;
-                            default: levelDisplay = caseItem.level;
-                        }
-                        document.getElementById('detailLevel').textContent = `المستوى: ${levelDisplay}`;
-                        
-                        document.getElementById('detailCaseId').textContent = `رقم القضية: ${caseItem.id}`;
-                        document.getElementById('detailStatus').textContent = `الحالة: ${caseItem.status === 'open' ? 'مفتوحة' : 'مغلقة'}`;
-                        document.getElementById('detailDate').textContent = `تاريخ الإنشاء: ${caseItem.date}`;
-                        document.getElementById('detailAdvisor').textContent = `المرشد: ${caseItem.advisor}`;
-                        document.getElementById('detailDescription').textContent = caseItem.description;
-                        
-                        // Clear response field
-                        document.getElementById('responseText').value = '';
-                        
-                        // Show modal
-                        caseDetailsModal.classList.remove('hidden');
-                    });
-                });
-
-                // WhatsApp button action
-                whatsappBtn.addEventListener('click', function() {
-                    // In a real app, you would use the student's phone number from the case data
-                    alert('سيتم فتح تطبيق واتساب لإرسال رسالة للطالب');
-                    // window.open(`https://wa.me/966${studentPhoneNumber}?text=${encodeURIComponent(responseText)}`);
-                });
-
-                // Call button action
-                callBtn.addEventListener('click', function() {
-                    // In a real app, you would use the student's phone number from the case data
-                    alert('سيتم الاتصال بالطالب على الرقم المسجل');
-                    // window.open(`tel:${studentPhoneNumber}`);
-                });
-
-                // Send response button action
-                sendResponseBtn.addEventListener('click', function() {
-                    const responseText = document.getElementById('responseText').value;
-                    if (!responseText) {
-                        alert('الرجاء كتابة رد قبل الإرسال');
-                        return;
-                    }
-                    
-                    // In a real app, you would save this response to the database
-                    alert('تم إرسال الرد بنجاح');
-                    caseDetailsModal.classList.add('hidden');
-                });
-
-                document.querySelectorAll('.edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const caseId = this.getAttribute('data-id');
-                        const caseItem = sampleCases.find(c => c.id == caseId);
-                        alert(`تعديل القضية: ${caseItem.studentName}\nسيتم فتح نموذج التعديل`);
-                        // In a real app, you would populate the edit form with case data
-                    });
-                });
-
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const caseId = this.getAttribute('data-id');
-                        if (confirm('هل أنت متأكد من حذف هذه القضية؟')) {
-                            // In a real app, you would remove from database
-                            const index = sampleCases.findIndex(c => c.id == caseId);
-                            if (index !== -1) {
-                                sampleCases.splice(index, 1);
-                                renderCasesTable();
-                                alert('تم حذف القضية بنجاح');
-                            }
-                        }
-                    });
-                });
-            }
-            
-            function renderReportsTable() {
-                reportsTableBody.innerHTML = '';
-                
-                const majorFilter = document.getElementById('reportMajorFilter').value;
-                const levelFilter = document.getElementById('reportLevelFilter').value;
-                const statusFilter = document.getElementById('reportStatusFilter').value;
-                
-                const filteredCases = sampleCases.filter(caseItem => {
-                    return (!majorFilter || caseItem.major === majorFilter) &&
-                           (!levelFilter || caseItem.level === levelFilter) &&
-                           (!statusFilter || caseItem.status === statusFilter);
-                });
-                
-                filteredCases.forEach(caseItem => {
-                    const tr = document.createElement('tr');
-                    
-                    // Map major to display name
-                    let majorDisplay;
-                    switch(caseItem.major) {
-                        case 'cyber_security':
-                            majorDisplay = 'هندسة أمن المعلومات السيبراني';
-                            break;
-                        case 'data_science_ai':
-                            majorDisplay = 'علم البيانات والذكاء الاصطناعي';
-                            break;
-                        case 'diploma_security':
-                            majorDisplay = 'دبلوم أمن المعلومات';
-                            break;
-                        default:
-                            majorDisplay = caseItem.major;
-                    }
-                    
-                    // Map level to display name
-                    let levelDisplay;
-                    switch(caseItem.level) {
-                        case '1':
-                            levelDisplay = 'سنة أولى';
-                            break;
-                        case '2':
-                            levelDisplay = 'سنة ثانية';
-                            break;
-                        case '3':
-                            levelDisplay = 'سنة ثالثة';
-                            break;
-                        case '4':
-                            levelDisplay = 'سنة رابعة';
-                            break;
-                        case '5':
-                            levelDisplay = 'سنة خامسة';
-                            break;
-                        default:
-                            levelDisplay = caseItem.level;
-                    }
-                    
-                    // Map status to display
-                    let statusDisplay = caseItem.status === 'open' ? 'مفتوحة' : 'مغلقة';
-                    
-                    tr.innerHTML = `
-                        <td class="px-6 py-4">${caseItem.id}</td>
-                        <td class="px-6 py-4">${caseItem.studentName}</td>
-                        <td class="px-6 py-4">${majorDisplay}</td>
-                        <td class="px-6 py-4">${levelDisplay}</td>
-                        <td class="px-6 py-4">${statusDisplay}</td>
-                        <td class="px-6 py-4">${caseItem.date}</td>
-                        <td class="px-6 py-4">${caseItem.advisor}</td>
-                    `;
-                    
-                    reportsTableBody.appendChild(tr);
-                });
-            }
-        });
-    </script>
+  </div>
+  <div class="doc-body">
+    <h2 class="sec-title">1. نظرة عامة على المشروع</h2>
+    <p>يعمل نظام القضايا الطلابية الحالي على قبول قضايا من أنواع مختلطة وتوجيهها موحدةً إلى المرشد الأكاديمي، مما يُثقل كاهله بقضايا تخارج نطاق اختصاصه. يهدف هذا المشروع إلى:</p>
+    <ul style="margin:12px 0">
+      <li>تحويل النظام من <strong>بوابة إرشاد أكاديمي</strong> إلى <strong>نظام تذاكر وخدمات جامعي متكامل</strong>.</li>
+      <li>فتح <strong>قناة استقبال جديدة عبر WhatsApp Business</strong> لخدمة الطلاب.</li>
+    </ul>
+    <table>
+      <thead><tr><th>المستفيد</th><th>المكسب المتوقع</th></tr></thead>
+      <tbody>
+        <tr><td>الطالب</td><td>تجربة تقديم قضية أسرع وأوضح مع إرشاد تلقائي للجهة الصحيحة</td></tr>
+        <tr><td>المرشد الأكاديمي</td><td>التفرغ للقضايا الأكاديمية فقط وتقليص الضجيج في لوحة تحكمه</td></tr>
+        <tr><td>الدوائر الإدارية والمالية</td><td>استلام القضايا المخصصة لها مباشرة وبشكل منظم</td></tr>
+        <tr><td>رئيس القسم / الإدارة</td><td>تقارير وإحصائيات دقيقة حسب النوع والتخصص والفترة الزمنية</td></tr>
+      </tbody>
+    </table>
+    <h2 class="sec-title">2. مراحل التنفيذ التفصيلية</h2>
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge">م1</div>
+        <div class="phase-title">تحديث بوابة الطالب على الويب</div>
+        <div class="phase-duration">⏱ أسبوعان — الأسبوع 1-2</div>
+      </div>
+      <div class="task-row"><span class="task-code">م1.1</span><div><div class="task-name">تحديث واجهة المستخدم في student.html</div><div class="task-meta">قائمتان منسدلتان متسلسلتان (رئيسي ← فرعي) + نص توجيهي ديناميكي | المسؤول: Frontend Developer | المدة: 3 أيام</div></div></div>
+      <div class="task-row"><span class="task-code">م1.2</span><div><div class="task-name">إنشاء ملف التصنيفات المركزي issue_categories.js</div><div class="task-meta">شجرة التصنيفات الكاملة ومصفوفة التوجيه — يُستخدم من الويب والواتساب | Frontend + Backend | المدة: 1 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م1.3</span><div><div class="task-name">تحديث بنية بيانات القضية في Firestore</div><div class="task-meta">إضافة الحقول: category, subCategory, targetDepartment, assignedToEmail | Backend Developer | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م1.4</span><div><div class="task-name">تحديث منطق إرسال إشعارات البريد الإلكتروني</div><div class="task-meta">توجيه الإيميل لـ assignedToEmail بدلاً من المرشد دائماً | Backend Developer | المدة: 2 يوم</div></div></div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge">م2</div>
+        <div class="phase-title">ضبط الصلاحيات ومصفوفة العرض</div>
+        <div class="phase-duration">⏱ أسبوع — الأسبوع 3</div>
+      </div>
+      <div class="task-row"><span class="task-code">م2.1</span><div><div class="task-name">حصر لوحة المرشد على القضايا الأكاديمية فقط</div><div class="task-meta">تعديل استعلامات Firestore: category == "القضايا الأكاديمية" | Frontend | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م2.2</span><div><div class="task-name">تحديث لوحة رئيس القسم</div><div class="task-meta">فلتر حسب النوع + Pie Chart لتوزيع القضايا + قسم سري للشكاوى | Frontend | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م2.3</span><div><div class="task-name">تحديث Firestore Security Rules</div><div class="task-meta">منع المرشد من قراءة أي قضية خارج تصنيف أكاديمي | Backend | المدة: 1 يوم</div></div></div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge">م3</div>
+        <div class="phase-title">تجهيز WhatsApp Business والـ Webhook</div>
+        <div class="phase-duration">⏱ أسبوع — الأسبوع 4</div>
+      </div>
+      <div class="task-row"><span class="task-code">م3.1</span><div><div class="task-name">إعداد Meta Developer وتفعيل الرقم ← (مهمة إدارية)</div><div class="task-meta">إنشاء تطبيق Business + ربط الرقم + الحصول على Permanent Access Token | مدير المشروع | المدة: 3 أيام</div></div></div>
+      <div class="task-row"><span class="task-code">م3.2</span><div><div class="task-name">إنشاء Cloud Function للـ Webhook</div><div class="task-meta">استقبال ومعالجة رسائل Meta (GET للتحقق، POST للرسائل) | Backend | المدة: 3 أيام</div></div></div>
+      <div class="task-row"><span class="task-code">م3.3</span><div><div class="task-name">إنشاء مجموعة whatsapp_sessions في Firestore</div><div class="task-meta">تتبع مرحلة الطالب: step, tempData, studentProfile, lastMessageAt | Backend | المدة: 1 يوم</div></div></div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge">م4</div>
+        <div class="phase-title">برمجة محرك المحادثة التفاعلية على الواتساب</div>
+        <div class="phase-duration">⏱ أسبوعان — الأسبوع 5-6</div>
+      </div>
+      <div class="task-row"><span class="task-code">م4.1</span><div><div class="task-name">التعرف على هوية الطالب (البحث برقم الهاتف)</div><div class="task-meta">البحث في students_profiles → رد ترحيبي أو طلب التسجيل | Backend | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م4.2</span><div><div class="task-name">برمجة إرسال قوائم الاختيار التفاعلية (List Messages)</div><div class="task-meta">دالة sendListMessage() — قوائم رئيسية وفرعية | Backend | المدة: 3 أيام</div></div></div>
+      <div class="task-row"><span class="task-code">م4.3</span><div><div class="task-name">مراحل جمع بيانات القضية</div><div class="task-meta">عنوان ← تفاصيل ← مرفقات ← بطاقة مراجعة نهائية مع زرَّي التأكيد والإلغاء | Backend | المدة: 3 أيام</div></div></div>
+      <div class="task-row"><span class="task-code">م4.4</span><div><div class="task-name">حفظ القضية والإشعار البريدي الفوري</div><div class="task-meta">حفظ في issues مع source:"whatsapp" + إيميل للجهة المعنية + تأكيد للطالب | Backend | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م4.5</span><div><div class="task-name">معالجة الحالات الاستثنائية</div><div class="task-meta">قضية مكررة يومياً، رسالة غير مفهومة، انتهاء الجلسة بعد 30 دقيقة خمول | Backend | المدة: 1 يوم</div></div></div>
+    </div>
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge">م5</div>
+        <div class="phase-title">الاختبار الشامل والإطلاق</div>
+        <div class="phase-duration">⏱ أسبوع — الأسبوع 7</div>
+      </div>
+      <div class="task-row"><span class="task-code">م5.1</span><div><div class="task-name">اختبار الوحدات (Unit Testing)</div><div class="task-meta">كامل فريق التطوير | المدة: 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م5.2</span><div><div class="task-name">اختبار التكامل (Integration Testing)</div><div class="task-meta">سيناريوهات كاملة: ويب + واتساب ← Firestore ← بريد إلكتروني | 2 يوم</div></div></div>
+      <div class="task-row"><span class="task-code">م5.3</span><div><div class="task-name">الاختبار الميداني + الإطلاق والمراقبة</div><div class="task-meta">مجموعة طلاب تجريبيين ← نشر على Firebase Hosting ← مراقبة 48 ساعة | 1 يوم</div></div></div>
+    </div>
+    <h2 class="sec-title">3. شجرة تصنيف القضايا الكاملة ومصفوفة التوجيه</h2>
+    <div class="alert alert-danger">
+      <span class="alert-icon">⚠️</span>
+      <div>تحتاج هذه القائمة إلى <strong>اعتماد رسمي من إدارة الكلية</strong> قبل البدء بالتنفيذ، مع تزويد الفريق التقني بعناوين البريد الإلكتروني لكل جهة.</div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header bg-academic"><span>🎓 1. القضايا الأكاديمية</span><span class="routing">الوجهة: المرشد الأكاديمي (تلقائياً)</span></div>
+      <div class="cat-body">
+        <div class="sub-row"><span class="code">AC-REG</span><span class="name">تسجيل ومساقات</span><span class="desc">طلب فتح شعبة مغلقة، تعارض في الجدول الدراسي، إضافة أو سحب مساق بعد انتهاء الموعد، تجاوز الحد الأقصى أو الأدنى للساعات</span></div>
+        <div class="sub-row"><span class="code">AC-GRD</span><span class="name">الدرجات والتقييم</span><span class="desc">مراجعة درجة (نصفي/نهائي/أعمال فصلية)، اعتراض على تصحيح، رصد درجة غير مكتمل (Incomplete)</span></div>
+        <div class="sub-row"><span class="code">AC-EXM</span><span class="name">الامتحانات</span><span class="desc">إعادة امتحان بسبب عذر طبي أو طارئ، تعارض مواعيد الامتحانات النهائية</span></div>
+        <div class="sub-row"><span class="code">AC-PTH</span><span class="name">المسار الدراسي</span><span class="desc">معادلة مساقات، التحويل بين التخصصات، تأجيل فصل/سحب قيد، الإنذارات وتدني المعدل، التظلم من متطلبات التخرج</span></div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header bg-financial"><span>💳 2. القضايا والشكاوى المالية</span><span class="routing">الوجهة: الدائرة المالية ⚠️ (مطلوب الإيميل)</span></div>
+      <div class="cat-body">
+        <div class="sub-row"><span class="code">FN-FEE</span><span class="name">الرسوم والمستحقات</span><span class="desc">تقسيط الرسوم الجامعية، فتح التسجيل المشروط بضمان مالي، تصحيح خطأ في الرصيد أو كشف الحساب</span></div>
+        <div class="sub-row"><span class="code">FN-SCH</span><span class="name">المنح والمساعدات</span><span class="desc">تقديم طلب منحة دراسية، إعفاء مالي (إخوة/تفوق/حالات خاصة)، متابعة صرف منحة داخلية/خارجية</span></div>
+        <div class="sub-row"><span class="code">FN-REF</span><span class="name">الاسترداد والتسويات</span><span class="desc">استرداد رسوم سحب مساق، تسوية مبالغ محولة بالخطأ عبر البنوك أو المحافظ الإلكترونية</span></div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header bg-admin"><span>📋 3. القضايا الإدارية وشؤون الطلاب</span><span class="routing">الوجهة: شؤون الطلاب / التسجيل ⚠️ (مطلوب الإيميل)</span></div>
+      <div class="cat-body">
+        <div class="sub-row"><span class="code">AD-DOC</span><span class="name">الوثائق والشهادات</span><span class="desc">طلب إفادة قيد، استخراج كشف درجات رسمي، بطاقة جامعية بدل فاقد/تالف، تصديق أوراق رسمية</span></div>
+        <div class="sub-row"><span class="code">AD-EXC</span><span class="name">الأعذار والغياب</span><span class="desc">تقديم أعذار طبية أو رسمية لتبرير الغياب ورفع الحرمان من الامتحان</span></div>
+        <div class="sub-row"><span class="code">AD-SRV</span><span class="name">الأنشطة والخدمات</span><span class="desc">حجز مرافق جامعية (ملاعب، قاعات)، طلبات السكن والمواصلات، التسجيل في الأنشطة اللامنهجية</span></div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header bg-complaint"><span>⚖️ 4. الشكاوى والنزاعات</span><span class="routing">الوجهة: رئيس القسم حصراً وبسرية تامة</span></div>
+      <div class="cat-body">
+        <div class="alert alert-danger" style="margin:10px 16px;border-radius:8px;font-size:12px;">
+          <span class="alert-icon">🔒</span>
+          <div>هذه القضايا <strong>لا تظهر في لوحة المرشد الأكاديمي نهائياً</strong>. تُوجَّه حصراً إلى رئيس القسم: <strong>head_ece@ucas.edu.ps</strong></div>
+        </div>
+        <div class="sub-row"><span class="code">CP-STF</span><span class="name">شكاوى الكادر الأكاديمي</span><span class="desc">سوء معاملة، عدم الالتزام بتوزيع الدرجات المعلن، الغياب المتكرر للمحاضر</span></div>
+        <div class="sub-row"><span class="code">CP-ADM</span><span class="name">شكاوى إدارية</span><span class="desc">بطء أو تعطل الخدمات في الأقسام والعمادات، سوء تعامل من موظف</span></div>
+        <div class="sub-row"><span class="code">CP-DSC</span><span class="name">السلوك والانضباط</span><span class="desc">الإبلاغ عن حالات تنمر أو مضايقات، تظلم من عقوبة انضباطية سابقة</span></div>
+      </div>
+    </div>
+    <div class="cat-card">
+      <div class="cat-header bg-tech"><span>🛠️ 5. الدعم التقني والأنظمة</span><span class="routing">الوجهة: فريق IT ⚠️ (مطلوب الإيميل)</span></div>
+      <div class="cat-body">
+        <div class="sub-row"><span class="code">TK-ACC</span><span class="name">الحسابات والوصول</span><span class="desc">استعادة كلمة المرور، مشاكل الدخول إلى بوابة الطالب أو منصة التعليم الإلكتروني (Moodle/LMS)</span></div>
+        <div class="sub-row"><span class="code">TK-BUG</span><span class="name">الأخطاء البرمجية</span><span class="desc">مشاكل تقنية أثناء التسجيل الإلكتروني، عدم ظهور المساقات المسجلة، أخطاء في واجهة التطبيق</span></div>
+      </div>
+    </div>
+    <h2 class="sec-title">4. الجدول الزمني الإجمالي (7 أسابيع)</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-phase">المرحلة 1</div><div class="tl-weeks">2</div><div class="tl-label">بوابة الويب</div></div>
+      <div class="tl-item"><div class="tl-phase">المرحلة 2</div><div class="tl-weeks">1</div><div class="tl-label">الصلاحيات</div></div>
+      <div class="tl-item"><div class="tl-phase">المرحلة 3</div><div class="tl-weeks">1</div><div class="tl-label">إعداد واتساب</div></div>
+      <div class="tl-item"><div class="tl-phase">المرحلة 4</div><div class="tl-weeks">2</div><div class="tl-label">محرك المحادثة</div></div>
+      <div class="tl-item tl-total"><div class="tl-phase">+ اختبار</div><div class="tl-weeks">7</div><div class="tl-label">أسبوع إجمالاً</div></div>
+    </div>
+    <h2 class="sec-title">5. المعلومات المطلوبة من الإدارة قبل البدء</h2>
+    <div class="alert alert-danger">
+      <span class="alert-icon">🚨</span>
+      <div><strong>تنبيه حرج:</strong> لا يمكن إنجاز بعض مهام التطوير بدون توفر هذه المعلومات أولاً.</div>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>المعلومة المطلوبة</th><th>الجهة المسؤولة</th><th>الأولوية</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>البريد الإلكتروني الرسمي للدائرة المالية</td><td>الإدارة المالية</td><td>🔴 حرجة</td></tr>
+        <tr><td>2</td><td>البريد الإلكتروني لقسم القبول والتسجيل / شؤون الطلاب</td><td>عمادة شؤون الطلاب</td><td>🔴 حرجة</td></tr>
+        <tr><td>3</td><td>البريد الإلكتروني لفريق الدعم الفني / IT</td><td>قسم IT</td><td>🔴 حرجة</td></tr>
+        <tr><td>4</td><td>رقم الهاتف المخصص لقناة الواتساب</td><td>إدارة الكلية</td><td>🔴 حرجة</td></tr>
+        <tr><td>5</td><td>الاعتماد الرسمي لشجرة التصنيفات وصياغتها</td><td>الإدارة الأكاديمية</td><td>🟡 عالية</td></tr>
+        <tr><td>6</td><td>أي تعديلات على بنود التصنيفات أو إضافة فئات جديدة</td><td>أصحاب الاختصاص</td><td>🟡 عالية</td></tr>
+      </tbody>
+    </table>
+    <h2 class="sec-title">6. توزيع الأدوار المقترح على فريق العمل</h2>
+    <table>
+      <thead><tr><th>الدور</th><th>المهام الرئيسية</th></tr></thead>
+      <tbody>
+        <tr><td>مطور الواجهة الأمامية (Frontend Developer)</td><td>م1.1، م2.1، م2.2</td></tr>
+        <tr><td>مطور Backend / Firebase</td><td>م1.2، م1.3، م1.4، م2.3، م3.2، م3.3، م4.1 → م4.5</td></tr>
+        <tr><td>مسؤول الحسابات الرقمية / مدير المشروع</td><td>م3.1 — إعداد Meta Business وتفعيل الرقم</td></tr>
+        <tr><td>فريق ضمان الجودة (QA)</td><td>م5.1، م5.2، م5.3</td></tr>
+        <tr><td>الإدارة الأكاديمية والمالية</td><td>اعتماد قائمة التصنيفات + تزويد الفريق بالإيميلات الرسمية</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-info" style="margin-top:28px;">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <strong>ملاحظات ختامية:</strong><br>
+        • أولوية موصى بها: إنجاز م1 و م2 أولاً (تؤثران على النظام الحالي الحي)، ثم م3 و م4 بشكل مستقل.<br>
+        • قاعدة البيانات موحدة: كل القضايا (ويب أو واتساب) تُحفظ في نفس مجموعة issues بنفس البنية.<br>
+        • لا تأثير على القضايا الموجودة: الحقول الجديدة تُضاف كإضافة، ولا تُحذف أو تُعدَّل البيانات القديمة.
+      </div>
+    </div>
+  </div>
+  <div class="doc-footer">
+    تم إعداد هذه الوثيقة بواسطة فريق تطوير نظام القضايا الطلابية<br>
+    الكلية الجامعية للعلوم التطبيقية (UCAS) — أغسطس 2026
+  </div>
+</div>
 </body>
 </html>
